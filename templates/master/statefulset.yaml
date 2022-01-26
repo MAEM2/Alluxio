@@ -42,7 +42,7 @@ spec:
       name: {{ $fullName }}-master
   serviceName: {{ $fullName }}-master
   podManagementPolicy: Parallel
-  replicas: 1
+  replicas: {{ $masterCount }}
   template:
     metadata:
       labels:
@@ -65,8 +65,8 @@ spec:
       {{ if .Values.hostAliases }}
       {{- include "alluxio.hostAliases" . | nindent 6 }}
       {{ end }}
-      hostNetwork: false
-      dnsPolicy: ClusterFirst
+      hostNetwork: {{ $hostNetwork }}
+      dnsPolicy: {{ .Values.master.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       nodeSelector:
       {{- if .Values.master.nodeSelector }}
 {{ toYaml .Values.master.nodeSelector | trim | indent 8  }}
@@ -81,9 +81,9 @@ spec:
 {{ toYaml .Values.tolerations | trim | indent 8  }}
       {{- end }}
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: {{ .Values.user }}
+        runAsGroup: {{ .Values.group }}
+        fsGroup: {{ .Values.fsGroup }}
     {{- if .Values.master.serviceAccount }}
       serviceAccountName: {{ .Values.master.serviceAccount }}
     {{- else if .Values.serviceAccount }}
@@ -101,8 +101,50 @@ spec:
         volumeMounts:
           - name: alluxio-journal
             mountPath: /journal
-        {{- end}}
+      {{- end}}
+      {{ if .Values.hub.enabled -}}
+      shareProcessNamespace: true
+      {{- end }}
       containers:
+        {{ if .Values.hub.enabled -}}
+        - name: alluxio-hub
+          image: {{ .Values.image }}:{{ .Values.imageTag }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          securityContext:
+            runAsUser: {{ .Values.user }}
+            runAsGroup: {{ .Values.group }}
+          {{- if .Values.hub.resources }}
+{{ include "alluxio.hub.resources" . | indent 10 }}
+          {{- end }}
+        command: [ "tini", "--", "/entrypoint.sh" ]
+          {{- if .Values.hub.agent.args }}
+        args:
+{{ toYaml .Values.hub.agent.args | trim | indent 12 }}
+          {{- end }}
+        env:
+          {{- range $key, $value := .Values.hub.env }}
+          - name: "{{ $key }}"
+            value: "{{ $value }}"
+            {{- end }}
+          - name: ALLUXIO_HUB_AGENT_RPC_HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: ALLUXIO_HUB_USER_ID
+            value: "{{ .Values.user }}"
+          - name: ALLUXIO_HUB_NO_START
+            value: "true"
+        envFrom:
+          - configMapRef:
+              name: {{ $fullName }}-config
+        ports:
+            - containerPort: { { .Values.hub.agent.ports.rpc } }
+              name: agent-rpc
+        volumeMounts:
+          - name: conf-volume
+            mountPath: /opt/alluxio/conf
+            readOnly: false
+          {{- end }}
         - name: alluxio-master
           image: {{ .Values.image }}:{{ .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -114,11 +156,19 @@ spec:
           args:
 {{ toYaml .Values.master.args | trim | indent 12 }}
           {{- end }}
+          {{- if $isHaEmbedded }}
+          env:
+          - name: ALLUXIO_MASTER_HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          {{- else if $isSingleMaster }}
           env:
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          {{- end }}
           {{- range $key, $value := .Values.master.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -156,9 +206,28 @@ spec:
             name: rpc
           - containerPort: {{ .Values.master.ports.web }}
             name: web
+          {{- if $isHaEmbedded }}
+          - containerPort: {{ .Values.master.ports.embedded }}
+            name: embedded
+          {{- end }}
           volumeMounts:
+            {{- if .Values.hub.enabled }}
+            - name: conf-volume
+              mountPath: /opt/alluxio/conf
+              readOnly: false
+            {{- end }}
+            {{- if .Values.metrics.enabled }}
+            - name: {{ $fullName }}-metrics-volume
+              mountPath: /config/metrics
+            {{- end }}
+            {{- if $needJournalVolume }}
             - name: alluxio-journal
               mountPath: /journal
+            {{- end }}
+            {{- if .Values.metastore }}
+            - name: alluxio-metastore
+              mountPath: {{ .Values.metastore.mountPath }}
+            {{- end }}
             {{- if .Values.secrets }}
               {{- if .Values.secrets.master }}
 {{- include "alluxio.master.secretVolumeMounts" . }}
@@ -181,11 +250,19 @@ spec:
           args:
 {{ toYaml .Values.jobMaster.args | trim | indent 12 }}
           {{- end }}
+          {{- if $isHaEmbedded }}
+          env:
+          - name: ALLUXIO_MASTER_HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          {{- else if $isSingleMaster }}
           env:
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          {{- end }}
           {{- range $key, $value := .Values.jobMaster.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
@@ -223,7 +300,16 @@ spec:
             name: job-rpc
           - containerPort: {{ .Values.jobMaster.ports.web }}
             name: job-web
+          {{- if $isHaEmbedded }}
+          - containerPort: {{ .Values.jobMaster.ports.embedded }}
+            name: job-embedded
+          {{- end }}
           volumeMounts:
+          {{- if .Values.hub.enabled }}
+          - name: conf-volume
+            mountPath: /opt/alluxio/conf
+            readOnly: false
+          {{- end }}
           {{- if .Values.metrics.enabled }}
           - name: {{ $fullName }}-metrics-volume
             mountPath: /config/metrics
@@ -241,6 +327,10 @@ spec:
           {{- end }}
       restartPolicy: Always
       volumes:
+        {{- if .Values.hub.enabled }}
+        - name: conf-volume
+          emptyDir: {}
+        {{- end }}
         {{- if .Values.metrics.enabled }}
         - name: {{ $fullName }}-metrics-volume
           configMap:
@@ -263,10 +353,20 @@ spec:
             claimName: "{{ .name }}"
           {{- end }}
         {{- end }}
+        {{- if .Values.metastore }}
+          {{- if eq .Values.metastore.volumeType "emptyDir" }}
+        - name: alluxio-metastore
+          emptyDir:
+            medium: {{ .Values.metastore.medium }}
+            sizeLimit: {{ .Values.metastore.size | quote }}
+          {{- end }}
+        {{- end}}
+        {{- if and $needJournalVolume (eq .Values.journal.volumeType "emptyDir") }}
         - name: alluxio-journal
           emptyDir:
             medium: {{ .Values.journal.medium }}
             sizeLimit: {{ .Values.journal.size | quote }}
+        {{- end}}
   volumeClaimTemplates:
   {{- if and $needJournalVolume (eq .Values.journal.volumeType "persistentVolumeClaim") }}
     - metadata:
@@ -278,5 +378,18 @@ spec:
         resources:
           requests:
             storage: {{ .Values.journal.size }}
+  {{- end }}
+  {{- if .Values.metastore }}
+    {{- if eq .Values.metastore.volumeType "persistentVolumeClaim" }}
+    - metadata:
+        name: alluxio-metastore
+      spec:
+        storageClassName: {{ .Values.metastore.storageClass }}
+        accessModes:
+{{ toYaml .Values.metastore.accessModes | indent 8 }}
+        resources:
+          requests:
+            storage: {{ .Values.metastore.size }}
+    {{- end }}
   {{- end }}
 {{- end }}
