@@ -51,20 +51,14 @@ spec:
       {{- end }}
     {{- end }}
     spec:
-      hostNetwork: {{ $hostNetwork }}
-      hostPID: {{ $hostPID }}
-      dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
-      {{- if .Values.hostAliases }}
-      {{- include "alluxio.hostAliases" . | nindent 6 }}
-      {{- end }}
+      hostNetwork: false
+      hostPID: false
+      dnsPolicy: ClusterFirst
       nodeSelector:
       {{- if .Values.worker.nodeSelector }}
 {{ toYaml .Values.worker.nodeSelector | trim | indent 8  }}
       {{- else if .Values.nodeSelector }}
 {{ toYaml .Values.nodeSelector | trim | indent 8  }}
-      {{- end }}
-      {{ if .Values.hub.enabled -}}
-      shareProcessNamespace: true
       {{- end }}
       tolerations:
       {{- if .Values.worker.tolerations }}
@@ -74,9 +68,9 @@ spec:
 {{ toYaml .Values.tolerations | trim | indent 8  }}
       {{- end }}
       securityContext:
-        runAsUser: {{ .Values.user }}
-        runAsGroup: {{ .Values.group }}
-        fsGroup: {{ .Values.fsGroup }}
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
     {{- if eq .Values.worker.fuseEnabled true }}
     {{- if or (or (ne .Values.user 0.0) (ne .Values.group 0.0)) (ne .Values.fsGroup 0.0) }}
     {{- fail ".Values.{user, group, fsGroup} have to be 0 in order to launch Fuse in worker process" }}
@@ -91,45 +85,6 @@ spec:
 {{ include "alluxio.imagePullSecrets" . | indent 6 }}
       {{- end}}
       containers:
-        {{ if .Values.hub.enabled -}}
-        - name: alluxio-hub
-          image: {{ .Values.image }}:{{ .Values.imageTag }}
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
-          securityContext:
-            runAsUser: {{ .Values.user }}
-            runAsGroup: {{ .Values.group }}
-          {{- if .Values.hub.resources }}
-{{ include "alluxio.hub.resources" . | indent 10 }}
-          {{- end }}
-          command: [ "tini", "--", "/entrypoint.sh" ]
-            {{- if .Values.hub.agent.args }}
-          args:
-{{ toYaml .Values.hub.agent.args | trim | indent 12 }}
-            {{- end }}
-          env:
-            {{- range $key, $value := .Values.hub.env }}
-          - name: "{{ $key }}"
-            value: "{{ $value }}"
-            {{- end }}
-          - name: ALLUXIO_HUB_AGENT_RPC_HOSTNAME
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: ALLUXIO_HUB_USER_ID
-            value: "{{ .Values.user }}"
-          - name: ALLUXIO_HUB_NO_START
-            value: "true"
-          envFrom:
-          - configMapRef:
-              name: {{ $fullName }}-config
-          ports:
-            - containerPort: {{ .Values.hub.agent.ports.rpc }}
-              name: agent-rpc
-          volumeMounts:
-          - name: conf-volume
-            mountPath: /opt/alluxio/conf
-            readOnly: false
-        {{- end }}
         - name: alluxio-worker
           image: {{ .Values.image }}:{{ .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -146,23 +101,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
-          {{- if not .Values.worker.hostNetwork }}
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-          {{- end }}
-          {{- if eq .Values.worker.fuseEnabled true }}
-          - name: ALLUXIO_CLIENT_HOSTNAME
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
-          securityContext:
-            privileged: true
-            capabilities:
-              add:
-                - SYS_ADMIN
-          {{- end }}
           {{- range $key, $value := .Values.worker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -200,19 +142,8 @@ spec:
           - containerPort: {{ .Values.worker.ports.web }}
             name: web
           volumeMounts:
-            {{- if .Values.hub.enabled }}
-            - name: conf-volume
-              mountPath: /opt/alluxio/conf
-              readOnly: false
-            {{- end }}
-            {{- if .Values.metrics.enabled }}
-            - name: {{ $fullName }}-metrics-volume
-              mountPath: /config/metrics
-            {{- end }}
-            {{- if $needDomainSocketVolume }}
             - name: alluxio-domain
               mountPath: /opt/domain
-            {{- end }}
             {{- if .Values.secrets -}}
               {{- if .Values.secrets.worker -}}
 {{- include "alluxio.worker.secretVolumeMounts" . }}
@@ -224,13 +155,6 @@ spec:
             {{- if .Values.mounts -}}
 {{- include "alluxio.worker.otherVolumeMounts" . }}
             {{- end }}
-            {{- if eq .Values.worker.fuseEnabled true }}
-            - name: alluxio-fuse-device
-              mountPath: /dev/fuse
-            - name: alluxio-fuse-mount
-              mountPath: {{ .Values.fuse.mountPath | dir }}
-              mountPropagation: Bidirectional
-            {{- end}}
         - name: alluxio-job-worker
           image: {{ .Values.image }}:{{ .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -247,12 +171,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
-          {{- if not .Values.worker.hostNetwork }}
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
-          {{- end }}
           {{- range $key, $value := .Values.jobWorker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -292,19 +214,8 @@ spec:
           - containerPort: {{ .Values.jobWorker.ports.web }}
             name: job-web
           volumeMounts:
-            {{- if .Values.hub.enabled }}
-              - name: conf-volume
-                mountPath: /opt/alluxio/conf
-                readOnly: false
-            {{- end }}
-            {{- if .Values.metrics.enabled }}
-            - name: {{ $fullName }}-metrics-volume
-              mountPath: /config/metrics
-            {{- end }}
-            {{- if $needDomainSocketVolume }}
             - name: alluxio-domain
               mountPath: /opt/domain
-            {{- end }}
             {{- if .Values.secrets }}
               {{- if .Values.secrets.worker }}
 {{- include "alluxio.worker.secretVolumeMounts" . }}
@@ -318,15 +229,6 @@ spec:
             {{- end }}
       restartPolicy: Always
       volumes:
-        {{- if .Values.hub.enabled }}
-        - name: conf-volume
-          emptyDir: { }
-        {{- end }}
-        {{- if .Values.metrics.enabled }}
-        - name: {{ $fullName }}-metrics-volume
-          configMap:
-            name: {{ $fullName }}-metrics
-        {{- end }}
         {{- if $needDomainSocketVolume }}
 {{- include "alluxio.worker.shortCircuit.volume" . }}
         {{- end }}
@@ -344,15 +246,5 @@ spec:
           persistentVolumeClaim:
             claimName: "{{ .name }}"
           {{- end }}
-        {{- end }}
-        {{- if .Values.worker.fuseEnabled }}
-        - name: alluxio-fuse-device
-          hostPath:
-            path: /dev/fuse
-            type: CharDevice
-        - name: alluxio-fuse-mount
-          hostPath:
-            path: {{ .Values.fuse.mountPath | dir }}
-            type: Directory
         {{- end }}
 {{- end }}
