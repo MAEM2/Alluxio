@@ -261,14 +261,6 @@ spec:
             claimName: "{{ .name }}"
           {{- end }}
         {{- end }}
-        {{- if .Values.metastore }}
-          {{- if eq .Values.metastore.volumeType "emptyDir" }}
-        - name: alluxio-metastore
-          emptyDir:
-            medium: {{ .Values.metastore.medium }}
-            sizeLimit: {{ .Values.metastore.size | quote }}
-          {{- end }}
-        {{- end}}
         - name: alluxio-journal
           emptyDir:
             medium: {{ .Values.journal.medium }}
@@ -284,18 +276,5 @@ spec:
         resources:
           requests:
             storage: {{ .Values.journal.size }}
-  {{- end }}
-  {{- if .Values.metastore }}
-    {{- if eq .Values.metastore.volumeType "persistentVolumeClaim" }}
-    - metadata:
-        name: alluxio-metastore
-      spec:
-        storageClassName: {{ .Values.metastore.storageClass }}
-        accessModes:
-{{ toYaml .Values.metastore.accessModes | indent 8 }}
-        resources:
-          requests:
-            storage: {{ .Values.metastore.size }}
-    {{- end }}
   {{- end }}
 {{- end }}
