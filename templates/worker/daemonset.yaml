@@ -28,6 +28,7 @@ metadata:
     heritage: {{ .Release.Service }}
     role: alluxio-worker
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: {{ template "alluxio.name" . }}
