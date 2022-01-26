@@ -12,7 +12,12 @@
 # This should not be modified in the usual case.
 fullnameOverride: alluxio
 
-
+s3:
+  endpoint:
+    host:
+    region:
+  accessKey:
+  secretKey:
 ## Common ##
 
 # Docker Image
