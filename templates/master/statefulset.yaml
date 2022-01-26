@@ -157,10 +157,6 @@ spec:
           volumeMounts:
             - name: alluxio-journal
               mountPath: /journal
-            {{- if .Values.metastore }}
-            - name: alluxio-metastore
-              mountPath: {{ .Values.metastore.mountPath }}
-            {{- end }}
             {{- if .Values.secrets }}
               {{- if .Values.secrets.master }}
 {{- include "alluxio.master.secretVolumeMounts" . }}
