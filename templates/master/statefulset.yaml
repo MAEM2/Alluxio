@@ -93,6 +93,7 @@ spec:
 {{ include "alluxio.imagePullSecrets" . | indent 6 }}
       {{- end}}
       initContainers:
+      {{- if .Values.journal.format.runFormat}}
       - name: journal-format
         image: {{ .Values.image }}:{{ .Values.imageTag }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -100,6 +101,7 @@ spec:
         volumeMounts:
           - name: alluxio-journal
             mountPath: /journal
+        {{- end}}
       containers:
         - name: alluxio-master
           image: {{ .Values.image }}:{{ .Values.imageTag }}
