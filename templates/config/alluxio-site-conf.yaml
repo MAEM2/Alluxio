@@ -1,4 +1,6 @@
+{{- $name := include "alluxio.name" . }}
 {{- $fullName := include "alluxio.fullname" . }}
+{{- $chart := include "alluxio.chart" . }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
