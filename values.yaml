@@ -18,11 +18,14 @@ s3:
     region:
   accessKey:
   secretKey:
+
+
+
 ## Common ##
 
 # Docker Image
 image: alluxio/alluxio
-imageTag: 2.8.0-SNAPSHOT
+imageTag: 2.7.2
 imagePullPolicy: IfNotPresent
 
 # Security Context
@@ -86,11 +89,36 @@ master:
   args: # Arguments to Docker entrypoint
     - master-only
     - --no-format
+  config:
+    path: /conf/alluxio-site.properties
+    subPath: alluxio-site.properties
   # Properties for the master component
   properties:
     # Example: use ROCKS DB instead of Heap
     # alluxio.master.metastore: ROCKS
     # alluxio.master.metastore.dir: /metastore
+    alluxio.master.hostname=localhost
+    alluxio.master.mount.table.root.ufs=s3://<S3_BUCKET>/
+    alluxio.underfs.s3.endpoint=<S3_ENDPOINT>
+    alluxio.underfs.s3.endpoint.region=<S3_ENDPOINT_REGION>
+    aws.accessKeyId=<S3 ACCESS KEY>
+    aws.secretKey=<S3 SECRET KEY>
+    # If the S3 connection is slow, a larger timeout is useful
+    alluxio.underfs.s3.socket.timeout=500sec
+    alluxio.underfs.s3.request.timeout=5min
+
+    # If we expect a high number of concurrent metadata operations
+    alluxio.underfs.s3.admin.threads.max=80
+    # If the total metadata + data operations is high
+    alluxio.underfs.s3.threads.max=160
+
+    # For a worker, the number of concurrent writes to S3
+    # For a master, the number of threads to concurrently rename files within a directory
+    alluxio.underfs.s3.upload.threads.max=80
+
+    # Thread-pool size to submit delete and rename operations to S3 on master
+    alluxio.underfs.object.store.service.threads=80
+
   resources:
     # The default xmx is 8G
     limits:
