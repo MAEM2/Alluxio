@@ -1,0 +1,21 @@
+{{- $fullName := include "alluxio.fullname" . }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  name: {{ $fullName }}-site-config
+  labels:
+    name: {{ $fullName }}-site-config
+    app: {{ $name }}
+    chart: {{ $chart }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  {{- with .Values.master.properties }}
+  alluxio-site.properties: |-
+    {{- toYaml . | nindent 4 }}
+    {{end}}
+  {{end}}
+---
