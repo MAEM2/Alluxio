@@ -18,7 +18,14 @@ data:
 
   alluxio-site.properties: |
     alluxio.master.hostname=localhost
+    
     alluxio.master.mount.table.root.ufs={{ .Values.s3.bucket }}
+    alluxio.master.mount.table.root.option.aws.accessKeyId={{ .Values.s3.accessKey }}
+    alluxio.master.mount.table.root.option.aws.secretKey={{ .Values.s3.secretKey }}
+    alluxio.master.mount.table.root.option.alluxio.underfs.s3.endpoint={{ .Values.s3.endpoint.host }}
+    alluxio.master.mount.table.root.option.alluxio.underfs.s3.disable.dns.buckets=true
+    alluxio.master.mount.table.root.option.alluxio.underfs.s3.inherit.acl=true
+    
     alluxio.underfs.s3.endpoint={{ .Values.s3.endpoint.host }}
     alluxio.underfs.s3.endpoint.region={{ .Values.s3.endpoint.region }}
     aws.accessKeyId={{ .Values.s3.accessKey }}
