@@ -72,7 +72,6 @@ spec:
       name: job-rpc
     - port: 20002
       name: job-web
-  clusterIP: None
   selector:
     role: alluxio-master
     app: {{ $name }}
