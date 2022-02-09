@@ -122,6 +122,12 @@ spec:
 {{ toYaml .Values.hub.agent.args | trim | indent 12 }}
           {{- end }}
         env:
+          - name: JAVA_OPTS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: JAVA_TOOL_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: _JAVA_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
           {{- range $key, $value := .Values.hub.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
