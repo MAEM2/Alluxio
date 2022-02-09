@@ -170,6 +170,12 @@ spec:
                 fieldPath: metadata.name
           {{- else if $isSingleMaster }}
           env:
+          - name: JAVA_OPTS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: JAVA_TOOL_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: _JAVA_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
@@ -267,6 +273,12 @@ spec:
                 fieldPath: metadata.name
           {{- else if $isSingleMaster }}
           env:
+          - name: JAVA_OPTS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: JAVA_TOOL_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: _JAVA_OPTIONS
+            value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
