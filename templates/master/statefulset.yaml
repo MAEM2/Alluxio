@@ -308,6 +308,9 @@ spec:
             name: job-embedded
           {{- end }}
           volumeMounts:
+          - name: alluxio-site-conf
+            mountPath: {{ .Values.master.config.path }}
+            subPath: {{ .Values.master.config.subPath }}
           {{- if .Values.hub.enabled }}
           - name: conf-volume
             mountPath: /opt/alluxio/conf
