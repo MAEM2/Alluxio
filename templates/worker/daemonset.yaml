@@ -17,7 +17,7 @@
 {{- $hostPID := .Values.worker.hostPID }}
 {{- $fullName := include "alluxio.fullname" . }}
 
-{{- $workerCount := .Values.worker.count }}
+{{- $workerCount := int .Values.worker.count }}
 {{- range $i := until $workerCount }}
   {{- $workerName := printf "worker-%v" $i }}
 
