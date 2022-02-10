@@ -31,7 +31,7 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   ALLUXIO_JAVA_OPTS: |-
-    -Dalluxio.master.hostname=localhost
+    -Dalluxio.master.hostname=alluxio-master-0
     -Dalluxio.master.journal.type=UFS
     -Dalluxio.master.journal.folder=s3a://dmsa/alluxio/journal
 
@@ -49,16 +49,14 @@ data:
     -Dalluxio.security.stale.channel.purge.interval=365d
     -Dalluxio.underfs.object.store.service.threads=80
     -Dalluxio.underfs.s3.admin.threads.max=80
-    -XX:+PrintGCDetails
-    -XX:+PrintTenuringDistribution
-    -XX:+PrintGCTimestamps
+    
     -Xms2048M -Xmx8192M
   ALLUXIO_MASTER_JAVA_OPTS: |-
-    -Dalluxio.master.hostname=localhost
+    -Dalluxio.master.hostname=alluxio-master-0
   ALLUXIO_JOB_MASTER_JAVA_OPTS: |-
-    -Dalluxio.master.hostname=localhost
+    -Dalluxio.master.hostname=alluxio-master-0
   ALLUXIO_WORKER_JAVA_OPTS: |-
-    -Dalluxio.worker.hostname=localhost
+    -Dalluxio.worker.hostname=alluxio-worker-0
     -Dalluxio.worker.rpc.port=29999
     -Dalluxio.worker.web.port=30000
     -Dalluxio.worker.data.server.domain.socket.address=/opt/domain
@@ -73,7 +71,7 @@ data:
     -Dalluxio.worker.tieredstore.level0.watermark.high.ratio=0.95
     -Dalluxio.worker.tieredstore.level0.watermark.low.ratio=0.7
   ALLUXIO_JOB_WORKER_JAVA_OPTS: |-
-    -Dalluxio.worker.hostname=localhost
+    -Dalluxio.worker.hostname=alluxio-worker-0
     -Dalluxio.job.worker.rpc.port=30001
     -Dalluxio.job.worker.data.port=30002
     -Dalluxio.job.worker.web.port=30003
