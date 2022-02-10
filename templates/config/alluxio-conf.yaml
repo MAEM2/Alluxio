@@ -49,6 +49,10 @@ data:
     -Dalluxio.security.stale.channel.purge.interval=365d
     -Dalluxio.underfs.object.store.service.threads=80
     -Dalluxio.underfs.s3.admin.threads.max=80
+    -XX:+PrintGCDetails
+    -XX:+PrintTenuringDistribution
+    -XX:+PrintGCTimestamps
+    -Xms2048M -Xmx8192M
   ALLUXIO_MASTER_JAVA_OPTS: |-
     -Dalluxio.master.hostname=localhost
   ALLUXIO_JOB_MASTER_JAVA_OPTS: |-
