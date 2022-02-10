@@ -17,14 +17,10 @@
 {{- $hostPID := .Values.worker.hostPID }}
 {{- $fullName := include "alluxio.fullname" . }}
 
-{{- $workerCount := int .Values.worker.count }}
-{{- range $i := until $workerCount }}
-  {{- $workerName := printf "worker-%v" $i }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "alluxio.fullname" . }}-{{ $workerName}}
+  name: {{ template "alluxio.fullname" . }}-worker
   labels:
     app: {{ template "alluxio.name" . }}
     chart: {{ template "alluxio.chart" . }}
@@ -293,5 +289,4 @@ spec:
             claimName: "{{ .name }}"
           {{- end }}
         {{- end }}
-{{- end }}
 {{- end }}
