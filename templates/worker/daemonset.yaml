@@ -106,7 +106,7 @@ spec:
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: ALLUXIO_JAVA_OPTS
             valueFrom:
-              configMapRef:
+              configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
           - name: ALLUXIO_WORKER_HOSTNAME
@@ -190,7 +190,7 @@ spec:
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: ALLUXIO_JAVA_OPTS
             valueFrom:
-              configMapRef:
+              configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
           - name: ALLUXIO_WORKER_HOSTNAME
