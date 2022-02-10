@@ -248,6 +248,7 @@ journal:
 
 worker:
   enabled: true
+  count: 1
   env:
     # Extra environment variables for the worker pod
     # Example:
