@@ -128,6 +128,11 @@ spec:
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: _JAVA_OPTIONS
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: ALLUXIO_JAVA_OPTS
+            valueFrom:
+              configMapRef:
+                name: {{ $fullName }}-config
+                key: ALLUXIO_JAVA_OPTS
           {{- range $key, $value := .Values.hub.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -176,6 +181,11 @@ spec:
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: _JAVA_OPTIONS
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: ALLUXIO_JAVA_OPTS
+            valueFrom:
+              configMapRef:
+                name: {{ $fullName }}-config
+                key: ALLUXIO_JAVA_OPTS
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
@@ -279,6 +289,11 @@ spec:
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
           - name: _JAVA_OPTIONS
             value: -Dcom.amazonaws.sdk.disableCertChecking=true
+          - name: ALLUXIO_JAVA_OPTS
+            valueFrom:
+              configMapRef:
+                name: {{ $fullName }}-config
+                key: ALLUXIO_JAVA_OPTS
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
