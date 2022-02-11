@@ -91,7 +91,7 @@ master:
     - master-only
     - --no-format
   config:
-    path: /conf/alluxio-site.properties
+    path: /conf
     subPath: alluxio-site.properties
   # Properties for the master component
   properties:
