@@ -17,7 +17,7 @@
 {{- $fullName := include "alluxio.fullname" . }}
 {{- $chart := include "alluxio.chart" . }}
 {{- range $i := until $workerCount }}
-  {{- $workerName := printf "master-%v" $i }}
+  {{- $workerName := printf "worker-%v" $i }}
   {{- $workerJavaOpts := printf " -Dalluxio.worker.hostname=%v-%v " $fullName $workerName }}
 apiVersion: v1
 kind: Service
