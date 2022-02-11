@@ -20,7 +20,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "alluxio.fullname" . }}-worker-0
+  name: {{ template "alluxio.fullname" . }}-worker
   labels:
     app: {{ template "alluxio.name" . }}
     chart: {{ template "alluxio.chart" . }}
@@ -117,11 +117,11 @@ spec:
           - name: ALLUXIO_WORKER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.hostIP
+                fieldPath: metadata.name
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.podIP
+                fieldPath: metadata.name
           {{- range $key, $value := .Values.worker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -206,11 +206,11 @@ spec:
           - name: ALLUXIO_WORKER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.hostIP
+                fieldPath: metadata.name
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.podIP
+                fieldPath: metadata.name
           {{- range $key, $value := .Values.jobWorker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
