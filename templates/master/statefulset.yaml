@@ -178,13 +178,6 @@ spec:
           volumeMounts:
             - name: alluxio-site-conf
               mountPath: {{ .Values.master.config.path }}
-              subPath: {{ .Values.master.config.subPath }}
-            - name: {{ $fullName }}-config
-              mountPath: /opt/alluxio/conf/masters
-              subPath: masters
-            - name: {{ $fullName }}-config
-              mountPath: /opt/alluxio/conf/workers
-              subPath: workers
             {{- if .Values.metrics.enabled }}
             - name: {{ $fullName }}-metrics-volume
               mountPath: /config/metrics
@@ -280,13 +273,6 @@ spec:
           volumeMounts:
           - name: alluxio-site-conf
             mountPath: {{ .Values.master.config.path }}
-            subPath: {{ .Values.master.config.subPath }}
-          - name: {{ $fullName }}-config
-            mountPath: /opt/alluxio/conf/masters
-            subPath: masters
-          - name: {{ $fullName }}-config
-            mountPath: /opt/alluxio/conf/workers
-            subPath: workers
           {{- if .Values.metrics.enabled }}
           - name: {{ $fullName }}-metrics-volume
             mountPath: /config/metrics
@@ -307,9 +293,6 @@ spec:
         - name: alluxio-site-conf
           configMap:
             name: {{ $fullName }}-site-config
-        - name: {{ $fullName }}-conf
-          configMap:
-            name: {{ $fullName }}-config
         {{- if .Values.metrics.enabled }}
         - name: {{ $fullName }}-metrics-volume
           configMap:
