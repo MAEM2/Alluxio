@@ -46,4 +46,10 @@ data:
 
     # Thread-pool size to submit delete and rename operations to S3 on master
     alluxio.underfs.object.store.service.threads=80
+    
+  masters: |
+    alluxio-master-0
+  workers: |
+    alluxio-worker-0
+    
 ---
