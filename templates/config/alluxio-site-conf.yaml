@@ -17,7 +17,8 @@ metadata:
 data:
 
   alluxio-site.properties: |
-    alluxio.master.hostname=localhost
+    alluxio.master.hostname=alluxio-master-0
+    alluxio.master.web.hostname=alluxio-master-0
     
     alluxio.master.mount.table.root.ufs={{ .Values.s3.bucket }}
     alluxio.master.mount.table.root.option.aws.accessKeyId={{ .Values.s3.accessKey }}
