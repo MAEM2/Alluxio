@@ -182,7 +182,7 @@ spec:
             - name: {{ $fullName }}-config
               mountPath: /opt/alluxio/conf/masters
               subPath: masters
-             - name: {{ $fullName }}-config
+            - name: {{ $fullName }}-config
               mountPath: /opt/alluxio/conf/workers
               subPath: workers
             {{- if .Values.metrics.enabled }}
@@ -284,7 +284,7 @@ spec:
           - name: {{ $fullName }}-config
             mountPath: /opt/alluxio/conf/masters
             subPath: masters
-           - name: {{ $fullName }}-config
+          - name: {{ $fullName }}-config
             mountPath: /opt/alluxio/conf/workers
             subPath: workers
           {{- if .Values.metrics.enabled }}
