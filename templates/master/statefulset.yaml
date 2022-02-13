@@ -303,7 +303,7 @@ spec:
             name: {{ $fullName }}-site-config
         - name: alluxio-masters-conf
           configMap:
-            name: {{ $fullName }}-masters-config
+            name: {{ $fullName }}-master-config
         {{- if .Values.metrics.enabled }}
         - name: {{ $fullName }}-metrics-volume
           configMap:
