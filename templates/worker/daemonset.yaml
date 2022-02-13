@@ -161,6 +161,10 @@ spec:
           volumeMounts:
             - name: alluxio-site-conf
               mountPath: {{ .Values.master.config.path }}
+              subPath: {{ .Values.master.config.subPath}}
+            - name: alluxio-master-conf
+              mountPath: /opt/alluxio/conf/masters
+              subPath: masters
             - name: alluxio-domain
               mountPath: /opt/domain
             {{- if .Values.secrets -}}
@@ -251,6 +255,10 @@ spec:
           volumeMounts:
             - name: alluxio-site-conf
               mountPath: {{ .Values.master.config.path }}
+              subPath: {{ .Values.master.config.subPath }}
+            - name: alluxio-master-conf
+              mountPath: /opt/alluxio/conf/masters
+              subPath: masters
             - name: alluxio-domain
               mountPath: /opt/domain
             {{- if .Values.secrets }}
@@ -269,6 +277,9 @@ spec:
         - name: alluxio-site-conf
           configMap:
             name: {{ $fullName }}-site-config
+        - name: alluxio-master-conf
+          configMap:
+            name: {{ $fullName }}-master-config
         {{- if $needDomainSocketVolume }}
 {{- include "alluxio.worker.shortCircuit.volume" . }}
         {{- end }}
