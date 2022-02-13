@@ -20,6 +20,9 @@ data:
     alluxio.master.hostname=alluxio-master-0
     alluxio.master.web.hostname=alluxio-master-0
     
+    alluxio.master.journal.type=UFS
+    alluxio.master.journal.folder=s3a://dmsa/alluxio/journal
+    
     alluxio.master.mount.table.root.ufs={{ .Values.s3.bucket }}
     alluxio.master.mount.table.root.option.aws.accessKeyId={{ .Values.s3.accessKey }}
     alluxio.master.mount.table.root.option.aws.secretKey={{ .Values.s3.secretKey }}
@@ -46,6 +49,8 @@ data:
 
     # Thread-pool size to submit delete and rename operations to S3 on master
     alluxio.underfs.object.store.service.threads=80
+    
+    alluxio.worker.hostname=alluxio-worker-0
     
 
 ---
