@@ -17,6 +17,26 @@ metadata:
 data:
   
   masters: |
+    localhost
     alluxio-master-0
     
 ---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  name: {{ $fullName }}-worker-config
+  labels:
+    name: {{ $fullName }}-worker-config
+    app: {{ $name }}
+    chart: {{ $chart }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  
+  workers: |
+    localhost
+    alluxio-worker-0
