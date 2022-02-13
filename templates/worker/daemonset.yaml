@@ -165,6 +165,9 @@ spec:
             - name: alluxio-master-conf
               mountPath: /opt/alluxio/conf/masters
               subPath: masters
+            - name: alluxio-worker-conf
+              mountPath: /opt/alluxio/conf/workers
+              subPath: workers
             - name: alluxio-domain
               mountPath: /opt/domain
             {{- if .Values.secrets -}}
@@ -259,6 +262,9 @@ spec:
             - name: alluxio-master-conf
               mountPath: /opt/alluxio/conf/masters
               subPath: masters
+            - name: alluxio-worker-conf
+              mountPath: /opt/alluxio/conf/workers
+              subPath: workers
             - name: alluxio-domain
               mountPath: /opt/domain
             {{- if .Values.secrets }}
@@ -280,6 +286,9 @@ spec:
         - name: alluxio-master-conf
           configMap:
             name: {{ $fullName }}-master-config
+        - name: alluxio-worker-conf
+          configMap:
+            name: {{ $fullName }}-worker-config
         {{- if $needDomainSocketVolume }}
 {{- include "alluxio.worker.shortCircuit.volume" . }}
         {{- end }}
