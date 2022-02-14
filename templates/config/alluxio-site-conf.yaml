@@ -17,8 +17,8 @@ metadata:
 data:
 
   alluxio-site.properties: |
-    alluxio.master.hostname=alluxio-master-0
-    alluxio.master.web.hostname=alluxio-master-0
+    alluxio.master.hostname=localhost
+    alluxio.master.web.hostname=localhost
     
     alluxio.master.journal.type=UFS
     alluxio.master.journal.folder=s3a://dmsa/alluxio/journal
@@ -50,8 +50,8 @@ data:
     # Thread-pool size to submit delete and rename operations to S3 on master
     alluxio.underfs.object.store.service.threads=80
     
-    alluxio.worker.hostname=alluxio-worker-0
-    alluxio.worker.container.hostname=alluxio-worker-0
+    alluxio.worker.hostname=localhost
+    alluxio.worker.container.hostname=localhost
     
 
 ---
