@@ -51,7 +51,6 @@ data:
     alluxio.underfs.object.store.service.threads=80
     
     alluxio.worker.hostname=localhost
-    alluxio.worker.container.hostname=localhost
     
 
 ---
