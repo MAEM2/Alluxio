@@ -20,8 +20,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: alluxio-worker-0
-#   name: {{ template "alluxio.fullname" . }}-worker
+  name: {{ template "alluxio.fullname" . }}-worker
   labels:
     app: {{ template "alluxio.name" . }}
     chart: {{ template "alluxio.chart" . }}
@@ -37,6 +36,7 @@ spec:
       role: alluxio-worker
   template:
     metadata:
+      name: alluxio-worker-0
       labels:
         app: {{ template "alluxio.name" . }}
         chart: {{ template "alluxio.chart" . }}
