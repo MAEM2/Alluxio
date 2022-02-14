@@ -40,3 +40,4 @@ data:
   workers: |
     localhost
     alluxio-worker-0
+    alluxio-worker-1
