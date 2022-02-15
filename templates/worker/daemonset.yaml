@@ -18,7 +18,7 @@
 {{- $fullName := include "alluxio.fullname" . }}
 
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: {{ template "alluxio.fullname" . }}-worker
   labels:
@@ -28,6 +28,7 @@ metadata:
     heritage: {{ .Release.Service }}
     role: alluxio-worker
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: {{ template "alluxio.name" . }}
@@ -35,7 +36,7 @@ spec:
       role: alluxio-worker
   template:
     metadata:
-      name: alluxio-worker-0
+#       name: alluxio-worker-0
       labels:
         app: {{ template "alluxio.name" . }}
         chart: {{ template "alluxio.chart" . }}
@@ -54,7 +55,7 @@ spec:
     spec:
       hostNetwork: false
       hostPID: false
-      dnsPolicy: ClusterFirst
+      dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       nodeSelector:
       {{- if .Values.worker.nodeSelector }}
 {{ toYaml .Values.worker.nodeSelector | trim | indent 8  }}
