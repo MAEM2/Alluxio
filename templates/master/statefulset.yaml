@@ -65,8 +65,8 @@ spec:
       {{ if .Values.hostAliases }}
       {{- include "alluxio.hostAliases" . | nindent 6 }}
       {{ end }}
-      hostNetwork: {{ $hostNetwork }}
-      dnsPolicy: {{ .Values.master.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
+#       hostNetwork: {{ $hostNetwork }}
+#       dnsPolicy: {{ .Values.master.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       nodeSelector:
       {{- if .Values.master.nodeSelector }}
 {{ toYaml .Values.master.nodeSelector | trim | indent 8  }}
