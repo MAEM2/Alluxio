@@ -179,12 +179,12 @@ spec:
             - name: alluxio-site-conf
               mountPath: {{ .Values.master.config.path }}
               subPath: {{ .Values.master.config.subPath }}
-            - name: alluxio-masters-conf
-              mountPath: /opt/alluxio/conf/masters
-              subPath: masters
-            - name: alluxio-workers-conf
-              mountPath: /opt/alluxio/conf/workers
-              subPath: workers
+#             - name: alluxio-masters-conf
+#               mountPath: /opt/alluxio/conf/masters
+#               subPath: masters
+#             - name: alluxio-workers-conf
+#               mountPath: /opt/alluxio/conf/workers
+#               subPath: workers
             {{- if .Values.metrics.enabled }}
             - name: {{ $fullName }}-metrics-volume
               mountPath: /config/metrics
@@ -281,12 +281,12 @@ spec:
           - name: alluxio-site-conf
             mountPath: {{ .Values.master.config.path }}
             subPath: {{ .Values.master.config.subPath}}
-          - name: alluxio-masters-conf
-            mountPath: /opt/alluxio/conf/masters
-            subPath: masters
-          - name: alluxio-workers-conf
-            mountPath: /opt/alluxio/conf/workers
-            subPath: workers
+#           - name: alluxio-masters-conf
+#             mountPath: /opt/alluxio/conf/masters
+#             subPath: masters
+#           - name: alluxio-workers-conf
+#             mountPath: /opt/alluxio/conf/workers
+#             subPath: workers
           {{- if .Values.metrics.enabled }}
           - name: {{ $fullName }}-metrics-volume
             mountPath: /config/metrics
