@@ -81,6 +81,7 @@ properties:
 
 master:
   enabled: true
+  hostname: alluxio-master-0
   count: 1 # Controls the number of StatefulSets. For multiMaster mode increase this to >1.
   replicas: 1 # Controls #replicas in a StatefulSet and should not be modified in the usual case.
   env:
@@ -248,6 +249,7 @@ journal:
 
 worker:
   enabled: true
+  hostname: alluxio-worker-0
   count: 1
   env:
     # Extra environment variables for the worker pod
