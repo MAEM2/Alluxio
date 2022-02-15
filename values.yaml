@@ -108,9 +108,9 @@ master:
       cpu: "1"
       memory: "1G"
   ports:
-    embedded: 19200
     rpc: 19998
     web: 19999
+    embedded: 19200
   hostPID: false
   hostNetwork: false
   # dnsPolicy will be ClusterFirstWithHostNet if hostNetwork: true
@@ -178,9 +178,9 @@ jobMaster:
       cpu: "1"
       memory: "1G"
   ports:
-    embedded: 20003
     rpc: 20001
     web: 20002
+    embedded: 20003
   # JVM options specific to the jobMaster container
   jvmOptions:
   readinessProbe:
