@@ -110,19 +110,19 @@ spec:
               configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
-          - name: ALLUXIO_WORKER_JAVA_OPTS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ $fullName }}-config
-                key: ALLUXIO_WORKER_JAVA_OPTS
+#           - name: ALLUXIO_WORKER_JAVA_OPTS
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: {{ $fullName }}-config
+#                 key: ALLUXIO_WORKER_JAVA_OPTS
           - name: ALLUXIO_WORKER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: metadata.name
+                fieldPath: status.hostIP
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: metadata.name
+                fieldPath: status.podIP
           {{- range $key, $value := .Values.worker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -205,11 +205,11 @@ spec:
               configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
-          - name: ALLUXIO_JOB_WORKER_JAVA_OPTS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ $fullName }}-config
-                key: ALLUXIO_JOB_WORKER_JAVA_OPTS
+#           - name: ALLUXIO_JOB_WORKER_JAVA_OPTS
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: {{ $fullName }}-config
+#                 key: ALLUXIO_JOB_WORKER_JAVA_OPTS
           - name: ALLUXIO_WORKER_HOSTNAME
             valueFrom:
               fieldRef:
