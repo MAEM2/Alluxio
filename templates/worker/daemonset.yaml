@@ -53,9 +53,9 @@ spec:
       {{- end }}
     {{- end }}
     spec:
-#       hostNetwork: false
-#       hostPID: false
-#       dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
+      hostNetwork: false
+      hostPID: false
+      dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       nodeSelector:
       {{- if .Values.worker.nodeSelector }}
 {{ toYaml .Values.worker.nodeSelector | trim | indent 8  }}
@@ -118,11 +118,11 @@ spec:
           - name: ALLUXIO_WORKER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.hostIP
+                fieldPath: metadata.name
           - name: ALLUXIO_WORKER_CONTAINER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.podIP
+                fieldPath: metadata.name
           {{- range $key, $value := .Values.worker.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
