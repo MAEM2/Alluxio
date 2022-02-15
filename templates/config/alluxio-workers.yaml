@@ -18,7 +18,7 @@ data:
   
   masters: |
     localhost
-    alluxio-master-0
+    {{ .Values.master.hostname}}
     
 ---
 
@@ -39,5 +39,5 @@ data:
   
   workers: |
     localhost
-    alluxio-worker-0
-    alluxio-worker-1
+    {{ .Values.worker.hostname}}
+    
