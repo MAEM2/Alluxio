@@ -129,15 +129,15 @@ spec:
               configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
-          - name: ALLUXIO_MASTER_JAVA_OPTS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ $fullName }}-config
-                key: ALLUXIO_MASTER_JAVA_OPTS
+#           - name: ALLUXIO_MASTER_JAVA_OPTS
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: {{ $fullName }}-config
+#                 key: ALLUXIO_MASTER_JAVA_OPTS
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: metadata.name
+                fieldPath: status.hostIP
           {{- range $key, $value := .Values.master.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -231,15 +231,15 @@ spec:
               configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
-          - name: ALLUXIO_JOB_MASTER_JAVA_OPTS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ $fullName }}-config
-                key: ALLUXIO_JOB_MASTER_JAVA_OPTS
+#           - name: ALLUXIO_JOB_MASTER_JAVA_OPTS
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: {{ $fullName }}-config
+#                 key: ALLUXIO_JOB_MASTER_JAVA_OPTS
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: metadata.name
+                fieldPath: status.hostIP
           {{- range $key, $value := .Values.jobMaster.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
