@@ -53,9 +53,9 @@ spec:
       {{- end }}
     {{- end }}
     spec:
-      hostNetwork: false
-      hostPID: false
-      dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
+#       hostNetwork: false
+#       hostPID: false
+#       dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       nodeSelector:
       {{- if .Values.worker.nodeSelector }}
 {{ toYaml .Values.worker.nodeSelector | trim | indent 8  }}
