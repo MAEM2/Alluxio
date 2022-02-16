@@ -40,11 +40,11 @@ spec:
       name: job-rpc
     - port: 20002
       name: job-web
-    - port: 19200
-      name: embedded
-    - port: 20003
-      name: job-embedded
-  clusterIP: None
+#     - port: 19200
+#       name: embedded
+#     - port: 20003
+#       name: job-embedded
+  type: ClusterIP
   selector:
     role: alluxio-master
     app: {{ $name }}
