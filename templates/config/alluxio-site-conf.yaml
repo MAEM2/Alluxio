@@ -19,6 +19,7 @@ data:
   alluxio-site.properties: |
     alluxio.master.hostname={{ .Values.master.hostname}}
     alluxio.master.web.hostname={{ .Values.master.hostname}}
+    alluxio.master.rpc.addresses={{ .Values.master.hostname}}
     
     alluxio.master.journal.type=UFS
     alluxio.master.journal.folder=s3a://dmsa/alluxio/journal
