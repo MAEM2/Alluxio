@@ -137,7 +137,7 @@ spec:
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.hostIP
+                fieldPath: status.podIP
           {{- range $key, $value := .Values.master.env }}
           - name: "{{ $key }}"
             value: "{{ $value }}"
@@ -239,7 +239,7 @@ spec:
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
-                fieldPath: status.hostIP
+                fieldPath: status.podIP
           {{- range $key, $value := .Values.jobMaster.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
