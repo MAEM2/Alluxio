@@ -51,31 +51,31 @@ spec:
     release: {{ $release.Name }}
     statefulset.kubernetes.io/pod-name: {{ $fullName }}-{{ $masterName }}
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ $fullName }}-{{ $masterName }}-external
-  labels:
-    app: {{ $name }}
-    chart: {{ $chart }}
-    release: {{ $release.Name }}
-    heritage: {{ $release.Service }}
-    role: alluxio-master
-spec:
-  type: NodePort
-  ports:
-    - port: 19998
-      name: rpc
-    - port: 19999
-      name: web
-    - port: 20001
-      name: job-rpc
-    - port: 20002
-      name: job-web
-  selector:
-    role: alluxio-master
-    app: {{ $name }}
-    release: {{ $release.Name }}
-    statefulset.kubernetes.io/pod-name: {{ $fullName }}-{{ $masterName }}
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: {{ $fullName }}-{{ $masterName }}-external
+#   labels:
+#     app: {{ $name }}
+#     chart: {{ $chart }}
+#     release: {{ $release.Name }}
+#     heritage: {{ $release.Service }}
+#     role: alluxio-master
+# spec:
+#   type: NodePort
+#   ports:
+#     - port: 19998
+#       name: rpc
+#     - port: 19999
+#       name: web
+#     - port: 20001
+#       name: job-rpc
+#     - port: 20002
+#       name: job-web
+#   selector:
+#     role: alluxio-master
+#     app: {{ $name }}
+#     release: {{ $release.Name }}
+#     statefulset.kubernetes.io/pod-name: {{ $fullName }}-{{ $masterName }}
 {{- end }}
 {{- end }}
