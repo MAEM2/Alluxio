@@ -129,11 +129,11 @@ spec:
               configMapKeyRef:
                 name: {{ $fullName }}-config
                 key: ALLUXIO_JAVA_OPTS
-          - name: ALLUXIO_MASTER_JAVA_OPTS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ $fullName }}-config
-                key: ALLUXIO_MASTER_JAVA_OPTS
+#           - name: ALLUXIO_MASTER_JAVA_OPTS
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: {{ $fullName }}-config
+#                 key: ALLUXIO_MASTER_JAVA_OPTS
           - name: ALLUXIO_MASTER_HOSTNAME
             valueFrom:
               fieldRef:
@@ -145,10 +145,10 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ $fullName }}-config
-{{- $probePort := $isHaEmbedded | ternary "embedded" "rpc" }}
+# {{- $probePort := $isHaEmbedded | ternary "embedded" "rpc" }}
           readinessProbe:
             tcpSocket:
-              port: {{ $probePort }}
+              port: rpc
             initialDelaySeconds: {{ .Values.master.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.master.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.master.readinessProbe.timeoutSeconds }}
@@ -156,7 +156,7 @@ spec:
             successThreshold: {{ .Values.master.readinessProbe.successThreshold }}
           livenessProbe:
             tcpSocket:
-              port: {{ $probePort }}
+              port: rpc
             initialDelaySeconds: {{ .Values.master.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.master.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.master.livenessProbe.timeoutSeconds }}
@@ -164,7 +164,7 @@ spec:
           {{- if .Values.master.startupProbe }}
           startupProbe:
             tcpSocket:
-              port: {{ $probePort }}
+              port: rpc
             initialDelaySeconds: {{ .Values.master.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.master.startupProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.master.startupProbe.timeoutSeconds }}
@@ -241,10 +241,10 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ $fullName }}-config
-{{- $jobProbePort := $isHaEmbedded | ternary "job-embedded" "job-rpc" }}
+# {{- $jobProbePort := $isHaEmbedded | ternary "job-embedded" "job-rpc" }}
           readinessProbe:
             tcpSocket:
-              port: {{ $jobProbePort }}
+              port: job-rpc
             initialDelaySeconds: {{ .Values.jobMaster.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.jobMaster.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.jobMaster.readinessProbe.timeoutSeconds }}
@@ -252,7 +252,7 @@ spec:
             successThreshold: {{ .Values.jobMaster.readinessProbe.successThreshold }}
           livenessProbe:
             tcpSocket:
-              port: {{ $jobProbePort }}
+              port: job-rpc
             initialDelaySeconds: {{ .Values.jobMaster.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.jobMaster.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.jobMaster.livenessProbe.timeoutSeconds }}
@@ -260,7 +260,7 @@ spec:
           {{- if .Values.jobMaster.startupProbe }}
           startupProbe:
             tcpSocket:
-              port: {{ $jobProbePort }}
+              port: job-rpc
             initialDelaySeconds: {{ .Values.jobMaster.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.jobMaster.startupProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.jobMaster.startupProbe.timeoutSeconds }}
