@@ -173,8 +173,8 @@ spec:
 #             - name: alluxio-worker-conf
 #               mountPath: /opt/alluxio/conf/workers
 #               subPath: workers
-#             - name: alluxio-domain
-#               mountPath: /opt/domain
+            - name: alluxio-domain
+              mountPath: /opt/domain
             {{- if .Values.secrets -}}
               {{- if .Values.secrets.worker -}}
 {{- include "alluxio.worker.secretVolumeMounts" . }}
@@ -270,8 +270,8 @@ spec:
 #             - name: alluxio-worker-conf
 #               mountPath: /opt/alluxio/conf/workers
 #               subPath: workers
-#             - name: alluxio-domain
-#               mountPath: /opt/domain
+            - name: alluxio-domain
+              mountPath: /opt/domain
             {{- if .Values.secrets }}
               {{- if .Values.secrets.worker }}
 {{- include "alluxio.worker.secretVolumeMounts" . }}
