@@ -251,6 +251,7 @@ worker:
   enabled: true
   hostname: alluxio-worker-0
   count: 1
+  user: 0
   env:
     # Extra environment variables for the worker pod
     # Example:
