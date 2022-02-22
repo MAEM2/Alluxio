@@ -56,7 +56,8 @@ spec:
 #       hostPID: false
       dnsPolicy: {{ .Values.worker.dnsPolicy | default ($hostNetwork | ternary "ClusterFirstWithHostNet" "ClusterFirst") }}
       securityContext:
-        fsGroup: {{ .Values.fsGroup }}
+#         fsGroup: {{ .Values.fsGroup }}
+        runAsUser: {{ .Values.worker.user}}
       nodeSelector:
       {{- if .Values.worker.nodeSelector }}
 {{ toYaml .Values.worker.nodeSelector | trim | indent 8  }}
@@ -92,8 +93,8 @@ spec:
           image: {{ .Values.image }}:{{ .Values.imageTag }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
-            runAsUser: {{ .Values.user }}
-            runAsGroup: {{ .Values.group }}
+            runAsUser: {{ .Values.worker.user }}
+#             runAsGroup: {{ .Values.group }}
           {{- if .Values.worker.resources  }}
 {{ include "alluxio.worker.resources" . | indent 10 }}
           {{- end }}
