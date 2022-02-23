@@ -102,9 +102,6 @@ spec:
           - name: alluxio-journal
             mountPath: /journal
       {{- end}}
-#       {{ if .Values.hub.enabled -}}
-#       shareProcessNamespace: true
-#       {{- end }}
       containers:
         - name: alluxio-master
           image: {{ .Values.alluxio.image }}:{{ .Values.alluxio.imageTag }}
