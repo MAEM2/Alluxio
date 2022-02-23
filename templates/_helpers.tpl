@@ -119,28 +119,6 @@ resources:
     {{- end }}
 {{- end -}}
 
-{{- define "alluxio.logserver.resources" -}}
-resources:
-  limits:
-    {{- if .Values.logserver.resources.limits }}
-      {{- if .Values.logserver.resources.limits.cpu  }}
-    cpu: {{ .Values.logserver.resources.limits.cpu }}
-      {{- end }}
-      {{- if .Values.logserver.resources.limits.memory  }}
-    memory: {{ .Values.logserver.resources.limits.memory }}
-      {{- end }}
-    {{- end }}
-  requests:
-    {{- if .Values.logserver.resources.requests }}
-      {{- if .Values.logserver.resources.requests.cpu  }}
-    cpu: {{ .Values.logserver.resources.requests.cpu }}
-      {{- end }}
-      {{- if .Values.logserver.resources.requests.memory  }}
-    memory: {{ .Values.logserver.resources.requests.memory }}
-      {{- end }}
-    {{- end }}
-{{- end -}}
-
 {{- define "alluxio.journal.format.resources" -}}
 resources:
   limits:
@@ -176,14 +154,6 @@ resources:
             - name: secret-{{ $key }}-volume
               mountPath: /secrets/{{ $val }}
               readOnly: true
-  {{- end -}}
-{{- end -}}
-
-{{- define "alluxio.logserver.secretVolumeMounts" -}}
-  {{- range $key, $val := .Values.secrets.logserver }}
-          - name: secret-{{ $key }}-volume
-            mountPath: /secrets/{{ $val }}
-            readOnly: true
   {{- end -}}
 {{- end -}}
 
@@ -300,23 +270,6 @@ resources:
   {{- end }}
 {{- end -}}
 
-{{- define "alluxio.logserver.log.volume" -}}
-{{- if eq .Values.logserver.volumeType "hostPath" }}
-- name: alluxio-logs
-  hostPath:
-    path: {{ .Values.logserver.hostPath }}
-    type: DirectoryOrCreate
-{{- else if eq .Values.logserver.volumeType "emptyDir" }}
-- name: alluxio-logs
-  emptyDir:
-    medium: {{ .Values.logserver.medium }}
-    sizeLimit: {{ .Values.logserver.size | quote }}
-{{- else }}
-- name: alluxio-logs
-  persistentVolumeClaim:
-    claimName: "{{ .Values.logserver.pvcName }}"
-{{- end }}
-{{- end -}}
 
 {{- define "alluxio.hostAliases" -}}
 hostAliases:
@@ -329,76 +282,9 @@ hostAliases:
 {{- end }}
 {{- end -}}
 
-{{- define "alluxio.hub.resources" -}}
-resources:
-  limits:
-    {{- if .Values.hub.resources.limits }}
-      {{- if .Values.hub.resources.limits.cpu  }}
-    cpu: {{ .Values.hub.resources.limits.cpu }}
-      {{- end }}
-      {{- if .Values.hub.resources.limits.memory  }}
-    memory: {{ .Values.hub.resources.limits.memory }}
-      {{- end }}
-    {{- end }}
-  requests:
-    {{- if .Values.hub.resources.requests }}
-      {{- if .Values.hub.resources.requests.cpu  }}
-    cpu: {{ .Values.hub.resources.requests.cpu }}
-      {{- end }}
-      {{- if .Values.hub.resources.requests.memory  }}
-    memory: {{ .Values.hub.resources.requests.memory }}
-      {{- end }}
-    {{- end }}
-{{- end -}}
-
 {{- define "alluxio.imagePullSecrets" -}}
 imagePullSecrets:
-{{- range $name := .Values.imagePullSecrets }}
+{{- range $name := .Values.alluxio.imagePullSecrets }}
   - name: {{ $name }}
 {{- end -}}
-{{- end -}}
-
-{{- define "trino.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
-*/}}
-{{- define "trino.fullname" -}}
-{{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "trino.coordinator" -}}
-{{ template "trino.fullname" . }}-coordinator
-{{- end -}}
-
-{{- define "trino.worker" -}}
-{{ template "trino.fullname" . }}-worker
-{{- end -}}
-
-{{- define "trino.hive" -}}
-{{ template "trino.fullname" . }}-hive
-{{- end -}}
-
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "trino.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "trino.jmx-exporter" -}}
-{{ template "trino.fullname" . }}-jmx-exporter
 {{- end -}}
