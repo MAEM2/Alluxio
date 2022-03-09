@@ -1,6 +1,32 @@
 {{- $name := include "alluxio.name" . }}
 {{- $fullName := include "alluxio.fullname" . }}
 {{- $chart := include "alluxio.chart" . }}
+
+{{- /* ===================================== */}}
+{{- /*         ALLUXIO_PROPERTIES             */}}
+{{- /* ===================================== */}}
+{{- $alluxioProperties := list}}
+{{- range $key, $val := .Values.properties }}
+  {{- $alluxioProperties = printf "%v=%v" $key $val | append $alluxioProperties }}
+{{- end }}
+
+{{- /* ===================================== */}}
+{{- /*         ALLUXIO_MASTER_ROPERTIES             */}}
+{{- /* ===================================== */}}
+{{- $alluxioMasterProperties := list}}
+{{- range $key, $val := .Values.master.properties }}
+  {{- $alluxioMasterProperties = printf "%v=%v" $key $val | append $alluxioMasterProperties }}
+{{- end }}
+
+
+{{- /* ===================================== */}}
+{{- /*         ALLUXIO_WORKER_ROPERTIES             */}}
+{{- /* ===================================== */}}
+{{- $alluxioWorkerProperties := list}}
+{{- range $key, $val := .Values.worker.properties }}
+  {{- $alluxioWorkerProperties = printf "%v=%v" $key $val | append $alluxioWorkerProperties }}
+{{- end }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,7 +42,16 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
 
+  alluxio.propertise: |
+    {{ range $key, $val  := .Values.properties }}
+    {{ $key }} = {{ $val }}
+    {{ end }}
+  alluxio-master.properties: |
+    {{ range $key, $val := alluxioProperties }}
+    {{ printf "%v " $key }}
+    {{ end }}
   alluxio-site.properties: |
+  
     alluxio.master.hostname={{ .Values.master.hostname}}
     alluxio.master.web.hostname={{ .Values.master.hostname}}
     alluxio.master.rpc.addresses={{ .Values.master.hostname}}
