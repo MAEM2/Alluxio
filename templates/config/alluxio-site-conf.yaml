@@ -47,7 +47,7 @@ data:
     {{ $key }} = {{ $val }}
     {{ end }}
   alluxio-master.properties: |
-    {{ range $key, $val := alluxioProperties }}
+    {{ range $key, $val := $alluxioProperties }}
     {{ printf "%v " $key }}
     {{ end }}
   alluxio-site.properties: |
