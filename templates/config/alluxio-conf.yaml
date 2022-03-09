@@ -172,4 +172,4 @@ data:
   ALLUXIO_JOB_WORKER_JAVA_OPTS: |-
     {{- /* Format ALLUXIO_JOB_WORKER_JAVA_OPTS list to one line */}}
     {{ range $key := $jobWorkerJavaOpts }}{{ printf "%v " $key }}{{ end }}
-  ALLUXIO_WORKER_TIEREDSTORE_LEVEL0_DIRS_PATH: /dev/shm
+#   ALLUXIO_WORKER_TIEREDSTORE_LEVEL0_DIRS_PATH: /dev/shm
