@@ -2,31 +2,6 @@
 {{- $fullName := include "alluxio.fullname" . }}
 {{- $chart := include "alluxio.chart" . }}
 
-{{- /* ===================================== */}}
-{{- /*         ALLUXIO_PROPERTIES             */}}
-{{- /* ===================================== */}}
-{{- $alluxioProperties := list}}
-{{- range $key, $val := .Values.properties }}
-  {{- $alluxioProperties = printf "%v=%v" $key $val | append $alluxioProperties }}
-{{- end }}
-
-{{- /* ===================================== */}}
-{{- /*         ALLUXIO_MASTER_ROPERTIES             */}}
-{{- /* ===================================== */}}
-{{- $alluxioMasterProperties := list}}
-{{- range $key, $val := .Values.master.properties }}
-  {{- $alluxioMasterProperties = printf "%v=%v" $key $val | append $alluxioMasterProperties }}
-{{- end }}
-
-
-{{- /* ===================================== */}}
-{{- /*         ALLUXIO_WORKER_ROPERTIES             */}}
-{{- /* ===================================== */}}
-{{- $alluxioWorkerProperties := list}}
-{{- range $key, $val := .Values.worker.properties }}
-  {{- $alluxioWorkerProperties = printf "%v=%v" $key $val | append $alluxioWorkerProperties }}
-{{- end }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -42,51 +17,18 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
 
-  alluxio.propertise: |
-    {{ range $key, $val  := .Values.properties }}
-    {{ $key }} = {{ $val }}
-    {{ end }}
-  alluxio-master.properties: |
-    {{ range $key, $val := $alluxioProperties }}
-    {{ printf "%v " $key }}
-    {{ end }}
   alluxio-site.properties: |
   
-    alluxio.master.hostname={{ .Values.master.hostname}}
-    alluxio.master.web.hostname={{ .Values.master.hostname}}
-    alluxio.master.rpc.addresses={{ .Values.master.hostname}}
+    {{ range $key, $val  := .Values.properties }}
+    {{ $key }} = {{ $val }}
+    {{ end }} 
     
-    alluxio.master.journal.type=UFS
-    alluxio.master.journal.folder=s3a://dmsa/alluxio/journal
+    {{ range $key, $val  := .Values.master.properties }}
+    {{ $key }} = {{ $val }}
+    {{ end }} 
     
-    alluxio.master.mount.table.root.ufs={{ .Values.s3.bucket }}
-    alluxio.master.mount.table.root.option.aws.accessKeyId={{ .Values.s3.accessKey }}
-    alluxio.master.mount.table.root.option.aws.secretKey={{ .Values.s3.secretKey }}
-    alluxio.master.mount.table.root.option.alluxio.underfs.s3.endpoint={{ .Values.s3.endpoint.host }}
-    alluxio.master.mount.table.root.option.alluxio.underfs.s3.disable.dns.buckets=true
-    alluxio.master.mount.table.root.option.alluxio.underfs.s3.inherit.acl=true
-    
-    alluxio.underfs.s3.endpoint={{ .Values.s3.endpoint.host }}
-    alluxio.underfs.s3.endpoint.region={{ .Values.s3.endpoint.region }}
-    aws.accessKeyId={{ .Values.s3.accessKey }}
-    aws.secretKey={{ .Values.s3.secretKey }}
-    # If the S3 connection is slow, a larger timeout is useful
-    alluxio.underfs.s3.socket.timeout=500sec
-    alluxio.underfs.s3.request.timeout=5min
-
-    # If we expect a high number of concurrent metadata operations
-    alluxio.underfs.s3.admin.threads.max=80
-    # If the total metadata + data operations is high
-    alluxio.underfs.s3.threads.max=160
-
-    # For a worker, the number of concurrent writes to S3
-    # For a master, the number of threads to concurrently rename files within a directory
-    alluxio.underfs.s3.upload.threads.max=80
-
-    # Thread-pool size to submit delete and rename operations to S3 on master
-    alluxio.underfs.object.store.service.threads=80
-    
-    alluxio.worker.hostname={{ .Values.worker.hostname}}
-    
+    {{ range $key, $val  := .Values.worker.properties }}
+    {{ $key }} = {{ $val }}
+    {{ end }} 
 
 ---
