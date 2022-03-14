@@ -72,6 +72,7 @@
 {{- /* ===================================== */}}
 {{- $workerJavaOpts := list }}
 {{- $workerJavaOpts = print "-Dalluxio.worker.hostname=${ALLUXIO_WORKER_HOSTNAME}" | append $workerJavaOpts }}
+{{- $workerJavaOpts = print "-Dalluxio.user.hostname=${ALLUXIO_USER_HOSTNAME}" | append $workerJavaOpts }}
 {{- $workerJavaOpts = printf "-Dalluxio.worker.rpc.port=%v" .Values.worker.ports.rpc | append $workerJavaOpts }}
 {{- $workerJavaOpts = printf "-Dalluxio.worker.web.port=%v" .Values.worker.ports.web | append $workerJavaOpts }}
 
@@ -133,6 +134,7 @@
 {{- /* ===================================== */}}
 {{- $jobWorkerJavaOpts := list }}
 {{- $jobWorkerJavaOpts = print "-Dalluxio.worker.hostname=${ALLUXIO_WORKER_HOSTNAME}" | append $jobWorkerJavaOpts }}
+{{- $jobWorkerJavaOpts = print "-Dalluxio.user.hostname=${ALLUXIO_USER_HOSTNAME}" | append $jobWorkerJavaOpts }}
 {{- $jobWorkerJavaOpts = printf "-Dalluxio.job.worker.rpc.port=%v" .Values.jobWorker.ports.rpc | append $jobWorkerJavaOpts }}
 {{- $jobWorkerJavaOpts = printf "-Dalluxio.job.worker.data.port=%v" .Values.jobWorker.ports.data | append $jobWorkerJavaOpts }}
 {{- $jobWorkerJavaOpts = printf "-Dalluxio.job.worker.web.port=%v" .Values.jobWorker.ports.web | append $jobWorkerJavaOpts }}
